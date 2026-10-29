@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>琴童练琴打卡 + 课时提醒 · 练琴助手</title>
+<meta name="description" content="给学钢琴、小提琴孩子的家长用：每天练琴打卡、按考级日期倒推练琴计划、课时余量和上课提醒、一键生成家长周报。数据只存在本机。">
+<meta name="theme-color" content="#1D1B26">
+<link rel="canonical" href="https://paopao-studio.pages.dev/piano-practice/">
+<meta property="og:title" content="琴童练琴打卡 + 课时提醒">
+<meta property="og:description" content="打卡、考级倒推计划、课时提醒、家长周报，一页搞定。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231D1B26'/%3E%3Crect x='5' y='7' width='5' height='18' rx='1' fill='%23F6F1E7'/%3E%3Crect x='11' y='7' width='5' height='18' rx='1' fill='%23F6F1E7'/%3E%3Crect x='17' y='7' width='5' height='18' rx='1' fill='%23F6F1E7'/%3E%3Crect x='23' y='7' width='4' height='18' rx='1' fill='%23F6F1E7'/%3E%3Crect x='8.5' y='7' width='3.5' height='10' fill='%231D1B26'/%3E%3Crect x='14.5' y='7' width='3.5' height='10' fill='%23C8432B'/%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#F6F1E7; --card:#FFFCF6; --ink:#1D1B26; --ink2:#55505E; --ink3:#8C8594;
+  --line:#E6DCCB; --red:#C8432B; --red2:#F3D9D2; --gold:#B5873A; --gold2:#F2E6CF;
+  --green:#2E6B50; --green2:#DCEBE2; --r:18px;
+  --serif:"Songti SC","STSong","Noto Serif CJK SC","Noto Serif SC","Source Han Serif SC",serif;
+  --sans:-apple-system,"PingFang SC","HarmonyOS Sans SC","MiSans","Noto Sans CJK SC","Microsoft YaHei",system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55}
+body{background-image:radial-gradient(circle at 20% 0%,#FBF7EF 0,transparent 45%),radial-gradient(circle at 100% 30%,#F1E8D8 0,transparent 40%)}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px calc(96px + env(safe-area-inset-bottom))}
+.top{background:var(--ink);color:#F6F1E7;position:relative;overflow:hidden;padding:22px 20px 58px;border-radius:0 0 28px 28px;margin:0 -16px}
+.top .keys{position:absolute;left:0;right:0;bottom:0;height:34px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='34'%3E%3Crect width='112' height='34' fill='%23F6F1E7'/%3E%3Cg fill='%23CFC6B6'%3E%3Crect x='15' width='1' height='34'/%3E%3Crect x='31' width='1' height='34'/%3E%3Crect x='47' width='1' height='34'/%3E%3Crect x='63' width='1' height='34'/%3E%3Crect x='79' width='1' height='34'/%3E%3Crect x='95' width='1' height='34'/%3E%3Crect x='111' width='1' height='34'/%3E%3C/g%3E%3Cg fill='%231D1B26'%3E%3Crect x='10' width='11' height='21' rx='1.5'/%3E%3Crect x='26' width='11' height='21' rx='1.5'/%3E%3Crect x='58' width='11' height='21' rx='1.5'/%3E%3Crect x='74' width='11' height='21' rx='1.5'/%3E%3Crect x='90' width='11' height='21' rx='1.5'/%3E%3C/g%3E%3C/svg%3E") repeat-x 0 0/112px 34px}
+.brand{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.18em;color:#C9C0D3}
+.seal{display:inline-grid;place-items:center;width:30px;height:30px;border:1.5px solid var(--red);color:var(--red);border-radius:6px;font-family:var(--serif);font-weight:700;font-size:15px;transform:rotate(-6deg);letter-spacing:0;flex:none}
+.top h1{font-family:var(--serif);font-weight:700;font-size:28px;line-height:1.25;margin:14px 0 6px;letter-spacing:.02em}
+.top h1 em{font-style:normal;color:#E9B97A}
+.top p{margin:0;color:#BDB5C6;font-size:13.5px}
+.demo{margin:12px 0 0;background:var(--gold2);border:1px dashed var(--gold);color:#6E4F17;border-radius:12px;padding:9px 12px;font-size:13px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.demo button{border:0;background:var(--ink);color:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:14px;box-shadow:0 1px 0 #fff inset,0 8px 24px -18px rgba(40,30,20,.35)}
+.lift{margin-top:-40px;position:relative;z-index:2}
+.demo + main .lift,#demoBar:not(:empty) + main .lift{margin-top:14px}
+.h{font-family:var(--serif);font-weight:700;font-size:18px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.h small{font-family:var(--sans);font-weight:400;font-size:12px;color:var(--ink3);margin-left:auto}
+.sub{color:var(--ink2);font-size:13.5px;margin:0 0 10px}
+.muted{color:var(--ink3);font-size:12.5px}
+.row{display:flex;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+label.f{display:block;font-size:12.5px;color:var(--ink2);margin:10px 0 4px}
+input[type=text],input[type=number],input[type=date],input[type=time],select,textarea{width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;outline:none;min-height:44px}
+input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(29,27,38,.08)}
+textarea{min-height:64px;resize:vertical}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:14px;padding:12px 16px;min-height:46px;background:var(--ink);color:#fff;font-weight:600;cursor:pointer;text-decoration:none}
+.btn.red{background:var(--red)} .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)} .btn.small{min-height:36px;padding:7px 12px;font-size:13px;border-radius:11px}
+.btn.block{width:100%}
+.btn:active{transform:translateY(1px)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-size:13.5px;cursor:pointer;min-height:36px}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip.q1.on{background:var(--green);border-color:var(--green)} .chip.q3.on{background:var(--red);border-color:var(--red)}
+.hero{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.ring{width:112px;height:112px;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:grid;place-items:center;text-align:center;line-height:1.1}
+.ring b{font-size:26px;font-family:var(--serif)} .ring span{display:block;font-size:11.5px;color:var(--ink3);margin-top:3px}
+.streak{font-family:var(--serif);font-size:40px;font-weight:700;line-height:1;color:var(--red)}
+.streak small{font-size:14px;color:var(--ink2);font-family:var(--sans);font-weight:400;margin-left:4px}
+.kv{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap}
+.kv div{font-size:12.5px;color:var(--ink3)} .kv b{display:block;color:var(--ink);font-size:16px;font-family:var(--serif)}
+.alert{border-radius:14px;padding:11px 13px;font-size:13.5px;margin-top:12px;display:flex;gap:9px;align-items:flex-start}
+.alert.warn{background:var(--red2);color:#7A2414} .alert.ok{background:var(--green2);color:#1E4A36} .alert.info{background:var(--gold2);color:#5E4313}
+.alert i{font-style:normal;font-size:16px;line-height:1.3}
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.heat .wd{font-size:11px;color:var(--ink3);text-align:center}
+.heat .d{aspect-ratio:1;border-radius:7px;background:#EFE7D9}
+.heat .d.l1{background:#E8CFB0} .heat .d.l2{background:#D69A6A} .heat .d.l3{background:var(--red)}
+.heat .d.today{outline:2px solid var(--ink);outline-offset:1px}
+.heat .d.fut{background:transparent;border:1px dashed var(--line)}
+.legend{display:flex;gap:6px;align-items:center;font-size:11.5px;color:var(--ink3);margin-top:8px;justify-content:flex-end}
+.legend s{display:inline-block;width:12px;height:12px;border-radius:3px;text-decoration:none}
+.tips{list-style:none;padding:0;margin:0}
+.tips li{padding:10px 0 10px 30px;border-top:1px dashed var(--line);position:relative;font-size:14px}
+.tips li:first-child{border-top:0}
+.tips li::before{content:attr(data-i);position:absolute;left:0;top:11px;width:21px;height:21px;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;display:grid;place-items:center}
+.tips li.r::before{background:var(--red)} .tips li.g::before{background:var(--green)}
+.list{margin:0;padding:0;list-style:none}
+.list li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px}
+.list li:first-child{border-top:0}
+.list .x{border:0;background:none;color:var(--ink3);font-size:20px;padding:0 6px;cursor:pointer;min-height:36px}
+.count{display:flex;align-items:baseline;gap:6px}
+.count b{font-family:var(--serif);font-size:46px;line-height:1;color:var(--ink)}
+.phases{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:14px 0 4px}
+.ph{border-radius:10px;padding:8px 4px;background:#F1EADF;font-size:11.5px;text-align:center;color:var(--ink2)}
+.ph b{display:block;font-size:13px;color:var(--ink)} .ph.on{background:var(--ink);color:#D9D2E2} .ph.on b{color:#fff}
+.ph.done{opacity:.55}
+.split{display:flex;height:12px;border-radius:999px;overflow:hidden;margin:10px 0 6px}
+.split i{display:block}
+.pieces .pc{padding:11px 0;border-top:1px solid var(--line)}
+.pieces .pc:first-child{border-top:0}
+.steps{display:flex;gap:3px;margin-top:7px}
+.steps button{flex:1;border:0;height:30px;border-radius:7px;background:#EFE7D9;font-size:11px;color:var(--ink3);cursor:pointer;padding:0}
+.steps button.on{background:var(--green);color:#fff}
+.steps button.cur{background:var(--ink);color:#fff}
+table.wk{width:100%;border-collapse:collapse;font-size:12.5px}
+table.wk th,table.wk td{padding:8px 4px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+table.wk th{color:var(--ink3);font-weight:500;border-top:0}
+table.wk tr.cur td{background:var(--gold2)}
+.bar{height:6px;background:#EFE7D9;border-radius:9px;overflow:hidden;margin-top:3px}.bar i{display:block;height:100%;background:var(--green)}
+.big{font-family:var(--serif);font-size:56px;line-height:1;font-weight:700}
+.big small{font-size:15px;font-family:var(--sans);font-weight:400;color:var(--ink2)}
+.pkg{height:10px;border-radius:9px;background:#EFE7D9;overflow:hidden;margin:10px 0 4px}.pkg i{display:block;height:100%;background:var(--ink)}
+.rep{background:var(--ink);color:#F6F1E7;border-radius:22px;padding:20px 18px;position:relative;overflow:hidden}
+.rep .t{font-family:var(--serif);font-size:21px;font-weight:700}
+.rep .m{color:#B9B0C4;font-size:12.5px}
+.rep .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.rep .stats div{background:rgba(255,255,255,.06);border-radius:12px;padding:10px 8px;text-align:center;font-size:11.5px;color:#B9B0C4}
+.rep .stats b{display:block;font-family:var(--serif);font-size:22px;color:#fff}
+.bars{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:110px;margin:6px 0 4px;padding-top:14px}
+.bars div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:10.5px;color:#B9B0C4;gap:4px}
+.bars i{display:block;width:100%;border-radius:6px 6px 3px 3px;background:#E9B97A;min-height:3px}
+.bars i.z{background:rgba(255,255,255,.12)}
+.rep .cm{background:#F6F1E7;color:var(--ink);border-radius:14px;padding:12px 13px;font-size:13.5px;margin-top:12px}
+.rep .cm b{color:var(--red)}
+.weeknav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(255,252,246,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs button{border:0;background:none;padding:6px 0 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;color:var(--ink3);cursor:pointer}
+nav.tabs button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7}
+nav.tabs button.on{color:var(--ink);font-weight:600}
+nav.tabs button.on svg{stroke:var(--red)}
+.modal{position:fixed;inset:0;background:rgba(20,18,26,.72);z-index:50;display:none;align-items:center;justify-content:center;padding:18px}
+.modal.on{display:flex}
+.modal .box{background:var(--card);border-radius:20px;padding:14px;max-width:440px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.modal img{width:100%;border-radius:12px;display:block}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:999px;font-size:13.5px;z-index:60;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+.foot{text-align:center;color:var(--ink3);font-size:12px;margin:22px 0 0}
+.foot a{color:var(--ink2)}
+.empty{text-align:center;padding:10px 0 2px}
+.empty .art{font-family:var(--serif);font-size:44px;color:var(--gold)}
+hr.s{border:0;border-top:1px dashed var(--line);margin:14px 0}
+@media (min-width:700px){.top{border-radius:0 0 32px 32px}.top h1{font-size:32px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="seal">琴</span>练琴助手 · 家长版</div>
+    <h1>琴童练琴打卡<br><em>+ 课时提醒</em></h1>
+    <p>每天两分钟记一笔，考级倒数、课时余量、家长周报全都有。</p>
+    <div class="keys"></div>
+  </header>
+  <div id="demoBar"></div>
+  <main id="view"></main>
+  <p class="foot">数据只保存在这台手机的浏览器里，不上传、不注册。<br>设计：谢林佚（钢琴 / 小提琴教师） · <a href="#me" data-go="me">关于与数据</a></p>
+</div>
+<nav class="tabs"><div class="in">
+  <button data-tab="today"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"/></svg>打卡</button>
+  <button data-tab="plan"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>考级计划</button>
+  <button data-tab="lesson"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>课时</button>
+  <button data-tab="report"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg>周报</button>
+  <button data-tab="me"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>档案</button>
+</div></nav>
+<div class="modal" id="modal"><div class="box" id="modalBox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+var KEY="qintong.v1";
+var WD=["周日","周一","周二","周三","周四","周五","周六"];
+var STAGES=["识谱","分段练","连起来","提速度","完整奏","能上台"];
+var TYPES=["基本练习","练习曲","乐曲"];
+var ORGS=["中央音乐学院","上海音乐学院","中国音乐家协会","安徽省音乐家协会","其他"];
+var PHASES=[
+ {n:"熟悉期",s:[25,30,45],f:"慢速识谱，标好指法；分手 / 分段练，每段先弹对再求快。"},
+ {n:"攻坚期",s:[20,30,50],f:"把每首的难点小节圈出来单独练；节拍器从慢速开始，稳了再加 4–8 拍。"},
+ {n:"完整期",s:[15,25,60],f:"每天把每首乐曲完整演奏一遍；开始背谱，注意句子、强弱和表情。"},
+ {n:"模拟期",s:[15,20,65],f:"按考试顺序从头到尾演奏，中途不停不重来；录视频回看，请家人当观众模拟考场。"}
+];
+function pad(n){return (n<10?"0":"")+n}
+function ymd(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function parse(s){var a=s.split("-");return new Date(+a[0],+a[1]-1,+a[2])}
+function addDays(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n)}
+function today(){var n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())}
+function diffDays(a,b){return Math.round((b-a)/864e5)}
+function md(d){return (d.getMonth()+1)+"月"+d.getDate()+"日"}
+function weekStart(d){return addDays(d,-((d.getDay()+6)%7))}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]})}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+
+function blank(){return {profile:null,pieces:[],logs:[],lessons:{total:0,used:[],slots:[],teacher:"",place:""},demo:false,notified:{}}}
+var S;
+try{S=JSON.parse(localStorage.getItem(KEY))||blank()}catch(e){S=blank()}
+if(!S.lessons)S.lessons=blank().lessons; if(!S.notified)S.notified={}; if(!S.pieces)S.pieces=[]; if(!S.logs)S.logs=[];
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast("保存失败：浏览器存储不可用")}}
+var tab=(location.hash||"#today").slice(1); if(!/^(today|plan|lesson|report|me)$/.test(tab))tab="today";
+var repOffset=0, sel={pieces:[],q:2,min:null};
+
+function minutesByDay(){var m={};S.logs.forEach(function(l){m[l.date]=(m[l.date]||0)+(+l.minutes||0)});return m}
+function goal(){return (S.profile&&+S.profile.goal)||30}
+function streak(){var m=minutesByDay(),d=today(),n=0;if(!m[ymd(d)])d=addDays(d,-1);while(m[ymd(d)]>0){n++;d=addDays(d,-1)}return n}
+function bestStreak(){var days=Object.keys(minutesByDay()).sort(),best=0,cur=0,prev=null;days.forEach(function(s){var d=parse(s);cur=(prev&&diffDays(prev,d)===1)?cur+1:1;best=Math.max(best,cur);prev=d});return best}
+function remaining(){return Math.max(0,(+S.lessons.total||0)-S.lessons.used.length)}
+function nextLesson(from){
+  from=from||new Date();var best=null;
+  S.lessons.slots.forEach(function(s){
+    var hm=s.time.split(":");
+    for(var i=0;i<8;i++){var c=new Date(from.getFullYear(),from.getMonth(),from.getDate()+i,+hm[0],+hm[1]);
+      if(c.getDay()==+s.wd&&c>from){if(!best||c<best.at)best={at:c,slot:s};break}}
+  });
+  return best;
+}
+function whenText(dt){var dd=diffDays(today(),new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()));var w=dd===0?"今天":dd===1?"明天":dd===2?"后天":md(dt);return w+" "+WD[dt.getDay()]+" "+pad(dt.getHours())+":"+pad(dt.getMinutes())}
+function exam(){if(!S.profile||!S.profile.exam)return null;var e=parse(S.profile.exam);var st=S.profile.planStart?parse(S.profile.planStart):today();if(st>=e)st=addDays(e,-28);return {date:e,start:st,left:diffDays(today(),e),total:diffDays(st,e)}}
+function phaseInfo(){
+  var x=exam();if(!x)return null;
+  var T=Math.max(1,x.total),sim=Math.min(Math.max(7,Math.round(T*.1)),T),rest=T-sim,p1=Math.round(rest*.4),p2=Math.round(rest*.8);
+  var b=[0,p1,p2,rest,T+1],el=diffDays(x.start,today()),idx=3;
+  for(var i=0;i<4;i++){if(el<b[i+1]){idx=i;break}}
+  if(el<0)idx=0;
+  return {b:b,idx:idx,x:x,ranges:[0,1,2,3].map(function(i){return [addDays(x.start,b[i]),addDays(x.start,Math.max(b[i],b[i+1]-1))]})};
+}
+function weekStats(off){
+  var ws=addDays(weekStart(today()),off*7),m=minutesByDay(),days=[],tot=0,cnt=0,hit=0,pcs={},stuck={};
+  for(var i=0;i<7;i++){var d=addDays(ws,i),v=m[ymd(d)]||0;days.push({d:d,v:v});tot+=v;if(v>0)cnt++;if(v>=goal())hit++}
+  var a=ymd(ws),z=ymd(addDays(ws,6));
+  S.logs.forEach(function(l){if(l.date>=a&&l.date<=z){(l.pieces||[]).forEach(function(p){pcs[p]=(pcs[p]||0)+1;if(+l.q===3)stuck[p]=(stuck[p]||0)+1})}});
+  return {ws:ws,we:addDays(ws,6),days:days,tot:tot,cnt:cnt,hit:hit,pcs:pcs,stuck:stuck};
+}
+function lessonsInWeek(ws){var a=ymd(ws),b=ymd(addDays(ws,6));return S.lessons.used.filter(function(u){return u.date>=a&&u.date<=b}).length}
+
+/* 练琴助手：规则生成的建议 */
+function tips(){
+  var out=[],m=minutesByDay(),t=m[ymd(today())]||0,g=goal(),st=streak(),pi=phaseInfo(),nl=nextLesson(),rem=remaining();
+  if(!S.profile){out.push({c:"",t:"先到「档案」填孩子的乐器、考级级别和考试日期，助手才能给出倒推计划。"});return out}
+  if(t===0){var base=pi?Math.round(g*PHASES[pi.idx].s[0]/100):Math.round(g*.2);out.push({c:"r",t:"今天还没打卡。先用 "+base+" 分钟练音阶 / 基本功把手热起来，再进入曲子。"})}
+  else if(t<g)out.push({c:"",t:"今天已练 "+t+" 分钟，离目标还差 "+(g-t)+" 分钟。"});
+  else out.push({c:"g",t:"今天的 "+g+" 分钟目标已完成，辛苦了！"});
+  if(st>=7)out.push({c:"g",t:"已连续打卡 "+st+" 天。连续比时长更重要，保持住。"});
+  else if(st===0&&Object.keys(m).length)out.push({c:"r",t:"连续打卡断了。今天哪怕只练 10 分钟，也能重新开始计数。"});
+  if(pi&&pi.x.left>=0){
+    out.push({c:"",t:"现在是「"+PHASES[pi.idx].n+"」，距考试 "+pi.x.left+" 天。重点："+PHASES[pi.idx].f});
+    var need=Math.min(5,pi.idx*2),behind=S.pieces.filter(function(p){return p.type!=="基本练习"&&(p.stage||0)<need});
+    if(behind.length)out.push({c:"r",t:"《"+behind[0].name+"》还在「"+STAGES[behind[0].stage||0]+"」，按进度应该到「"+STAGES[need]+"」了，这周优先练它。"});
+  }
+  var ws=weekStats(0),sp=Object.keys(ws.stuck).filter(function(k){return ws.stuck[k]>=2});
+  if(sp.length)out.push({c:"r",t:"《"+sp[0]+"》本周 "+ws.stuck[sp[0]]+" 次记为「卡住了」。把卡的地方拆成 2–4 小节，慢速连对 5 遍再接回去；上课时请老师重点看。"});
+  if(nl&&(nl.at-new Date())/36e5<=48)out.push({c:"",t:whenText(nl.at)+" 有课。课前把老师上次布置的内容完整过一遍，记下想问的问题。"});
+  if(S.lessons.total&&rem<=2)out.push({c:"r",t:"课时只剩 "+rem+" 节，记得和老师确认续课，避免断课。"});
+  return out.slice(0,5);
+}
+function comment(w){
+  var g=goal(),s=[];
+  if(w.cnt===0)return "这一周还没有练琴记录。";
+  s.push("本周练琴 <b>"+w.cnt+"</b> 天，共 <b>"+w.tot+"</b> 分钟，"+(w.hit>=5?"达标 "+w.hit+" 天，很稳定":w.hit>=3?"达标 "+w.hit+" 天，还可以更稳定":"只有 "+w.hit+" 天达到 "+g+" 分钟目标，下周争取多两天")+"。");
+  var top=Object.keys(w.pcs).sort(function(a,b){return w.pcs[b]-w.pcs[a]});
+  if(top.length)s.push("练得最多的是《"+esc(top[0])+"》（"+w.pcs[top[0]]+" 次）。");
+  var never=S.pieces.filter(function(p){return !w.pcs[p.name]});
+  if(never.length)s.push("《"+esc(never[0].name)+"》本周没练到，下周记得安排。");
+  var st=Object.keys(w.stuck);if(st.length)s.push("《"+esc(st[0])+"》有卡住的情况，建议上课时请老师重点看。");
+  return s.join("");
+}
+
+var V=document.getElementById("view");
+function render(){
+  document.querySelectorAll("nav.tabs button").forEach(function(b){b.classList.toggle("on",b.dataset.tab===tab)});
+  document.getElementById("demoBar").innerHTML=S.demo?'<div class="demo"><span>当前是<b>示例数据</b>（虚构的孩子“示例·小雨”），仅用于演示功能。</span><button data-act="clearDemo">清除示例，开始使用</button></div>':"";
+  V.innerHTML=({today:vToday,plan:vPlan,lesson:vLesson,report:vReport,me:vMe})[tab]();
+}
+function ring(v,g){var p=Math.min(1,v/g),r=48,c=2*Math.PI*r;
+  return '<div class="ring"><svg width="112" height="112"><circle cx="56" cy="56" r="'+r+'" stroke="#EFE7D9" stroke-width="10" fill="none"/><circle cx="56" cy="56" r="'+r+'" stroke="'+(p>=1?"#2E6B50":"#C8432B")+'" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="'+(c*p)+' '+c+'"/></svg><div class="c"><div><b>'+v+'</b><span>/ '+g+' 分钟</span></div></div></div>'}
+function vToday(){
+  var m=minutesByDay(),t=m[ymd(today())]||0,g=goal(),h="",p=S.profile,nl=nextLesson(),x=exam();
+  if(!p)return '<section class="card lift empty"><div class="art">♪</div><p class="h" style="justify-content:center">先给孩子建个练琴档案</p><p class="sub">填乐器、考级级别、考试日期和每天练多久，<br>30 秒就好。</p><div class="grid2"><button class="btn" data-go="me">去建档</button><button class="btn ghost" data-act="demo">先看示例</button></div></section>'+tipCard();
+  h+='<section class="card lift"><div class="hero">'+ring(t,g)+'<div><div class="muted">'+esc(p.name)+' 已连续打卡</div><div class="streak">'+streak()+'<small>天</small></div><div class="kv"><div><b>'+bestStreak()+'</b>最长连续</div><div><b>'+weekStats(0).tot+'</b>本周分钟</div>'+(x&&x.left>=0?'<div><b>'+x.left+'</b>距考级天</div>':'')+'</div></div></div>';
+  if(nl&&(nl.at-new Date())/36e5<=24)h+='<div class="alert info"><i>⏰</i><div>'+whenText(nl.at)+' 上课'+(S.lessons.teacher?'（'+esc(S.lessons.teacher)+'）':'')+'，剩余课时 '+remaining()+' 节。</div></div>';
+  if(S.lessons.total&&remaining()<=2)h+='<div class="alert warn"><i>!</i><div>课时只剩 '+remaining()+' 节，记得续课。</div></div>';
+  h+='</section>';
+  var chips=S.pieces.map(function(pc){return '<button class="chip'+(sel.pieces.indexOf(pc.name)>=0?" on":"")+'" data-pc="'+esc(pc.name)+'">'+esc(pc.name)+'</button>'}).join("");
+  h+='<section class="card"><p class="h">记一笔 <small>可多次，当天自动累加</small></p>'+
+   '<label class="f">日期</label><input type="date" id="ciDate" value="'+ymd(today())+'" max="'+ymd(today())+'">'+
+   '<label class="f">练了多久（分钟）</label><div class="chips" id="minChips">'+[10,20,30,45,60].map(function(n){return '<button class="chip'+(sel.min===n?" on":"")+'" data-min="'+n+'">'+n+'</button>'}).join("")+'</div><input type="number" id="ciMin" inputmode="numeric" min="1" max="600" placeholder="或直接输入分钟数" style="margin-top:8px" value="'+(sel.min||"")+'">'+
+   '<label class="f">练了哪些曲目</label><div class="chips" id="pcChips">'+(chips||'<span class="muted">还没有曲目，可在「档案」添加考级曲目</span>')+'</div><input type="text" id="ciOther" placeholder="其他曲目（可选，用逗号分隔）" style="margin-top:8px">'+
+   '<label class="f">今天练得怎么样</label><div class="chips" id="qChips"><button class="chip q1'+(sel.q===1?" on":"")+'" data-q="1">很顺</button><button class="chip'+(sel.q===2?" on":"")+'" data-q="2">一般</button><button class="chip q3'+(sel.q===3?" on":"")+'" data-q="3">卡住了</button></div>'+
+   '<label class="f">备注（可选）</label><textarea id="ciNote" placeholder="例：第二页左手跳音还不稳"></textarea>'+
+   '<button class="btn red block" style="margin-top:14px" data-act="checkin">打卡</button></section>';
+  var ws=addDays(weekStart(today()),-28),cells="";
+  ["一","二","三","四","五","六","日"].forEach(function(w){cells+='<div class="wd">'+w+'</div>'});
+  for(var i=0;i<35;i++){var d=addDays(ws,i),v=m[ymd(d)]||0,lv=v===0?"":v>=g?"l3":v>=g/2?"l2":"l1",fut=d>today();
+    cells+='<div class="d '+(fut?"fut":lv)+(ymd(d)===ymd(today())?" today":"")+'" title="'+md(d)+' '+v+'分钟"></div>'}
+  h+='<section class="card"><p class="h">最近五周 <small>颜色越深练得越久</small></p><div class="heat">'+cells+'</div><div class="legend">少<s style="background:#EFE7D9"></s><s style="background:#E8CFB0"></s><s style="background:#D69A6A"></s><s style="background:#C8432B"></s>达标</div></section>';
+  h+=tipCard();
+  var rec=S.logs.slice().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:(b.ts||0)-(a.ts||0)}).slice(0,6);
+  if(rec.length)h+='<section class="card"><p class="h">最近记录</p><ul class="list">'+rec.map(function(l){return '<li><div><b>'+md(parse(l.date))+'</b> · '+l.minutes+' 分钟 '+(l.q==3?'<span style="color:var(--red)">· 卡住了</span>':l.q==1?'<span style="color:var(--green)">· 很顺</span>':'')+'<div class="muted">'+esc((l.pieces||[]).join("、")||"未记曲目")+(l.note?" — "+esc(l.note):"")+'</div></div><button class="x" data-del="'+esc(l.id)+'" aria-label="删除">×</button></li>'}).join("")+'</ul></section>';
+  return h;
+}
+function tipCard(){var t=tips();return '<section class="card"><p class="h"><span class="seal" style="width:24px;height:24px;font-size:12px">助</span>练琴助手建议 <small>根据打卡和计划自动生成</small></p><ul class="tips">'+t.map(function(x,i){return '<li class="'+x.c+'" data-i="'+(i+1)+'">'+esc(x.t)+'</li>'}).join("")+'</ul></section>'}
+
+function vPlan(){
+  var pi=phaseInfo(),p=S.profile;
+  if(!p||!pi)return '<section class="card lift empty"><div class="art">倒</div><p class="h" style="justify-content:center">设好考试日期，自动倒推计划</p><p class="sub">到「档案」填考级级别和考试日期，<br>助手会把剩下的日子分成四个阶段。</p><button class="btn" data-go="me">去设置</button></section>';
+  var x=pi.x,g=goal(),ph=PHASES[pi.idx],h="";
+  h+='<section class="card lift"><div class="muted">'+esc((p.org&&p.org!=="其他"?p.org+" · ":"")+p.inst+(p.target?" "+p.target+" 级":""))+' · '+x.date.getFullYear()+'年'+md(x.date)+'</div>';
+  if(x.left<0)h+='<div class="count"><b>已结束</b></div><p class="sub">考试日期已过。到「档案」设置下一次考试日期即可生成新计划。</p></section>';
+  else{
+   h+='<div class="count"><span class="muted">距考试还有</span><b>'+x.left+'</b><span class="muted">天</span></div>';
+   h+='<div class="phases">'+PHASES.map(function(f,i){var r=pi.ranges[i];return '<div class="ph'+(i===pi.idx?" on":i<pi.idx?" done":"")+'"><b>'+f.n+'</b>'+(r[0].getMonth()+1)+'/'+r[0].getDate()+'–'+(r[1].getMonth()+1)+'/'+r[1].getDate()+'</div>'}).join("")+'</div>';
+   h+='<hr class="s"><p class="h" style="font-size:16px">今天怎么练（'+g+' 分钟）</p>';
+   var cols=["#B5873A","#2E6B50","#C8432B"];
+   h+='<div class="split">'+ph.s.map(function(v,i){return '<i style="width:'+v+'%;background:'+cols[i]+'"></i>'}).join("")+'</div>';
+   h+='<div class="grid3">'+ph.s.map(function(v,i){return '<div class="muted"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+cols[i]+'"></span> '+TYPES[i]+'<br><b style="color:var(--ink);font-size:16px">'+Math.round(g*v/100)+'</b> 分钟</div>'}).join("")+'</div>';
+   h+='<div class="alert info"><i>♪</i><div><b>'+ph.n+'重点：</b>'+ph.f+'</div></div></section>';
+  }
+  h+='<section class="card"><p class="h">考级曲目进度 <small>点格子更新进度</small></p>';
+  if(!S.pieces.length)h+='<p class="sub">还没有添加曲目。到「档案」把老师定的考级曲目加进来。</p>';
+  else h+='<div class="pieces">'+S.pieces.map(function(pc,k){var st=pc.stage||0;return '<div class="pc"><div class="row" style="justify-content:space-between"><div><b>'+esc(pc.name)+'</b> <span class="muted">· '+esc(pc.type)+'</span></div><span class="muted">'+STAGES[st]+'</span></div><div class="steps">'+STAGES.map(function(s,i){return '<button class="'+(i<st?"on":i===st?"cur":"")+'" data-stage="'+k+':'+i+'">'+s+'</button>'}).join("")+'</div></div>'}).join("")+'</div>';
+  h+='</section>';
+  if(x.left>=0){
+   var m=minutesByDay(),rows="",ws=x.start,n=1;
+   while(ws<=x.date){var we=addDays(ws,6);if(we>x.date)we=x.date;var days=diffDays(ws,we)+1,plan=days*g,act=0;
+     for(var i=0;i<days;i++)act+=m[ymd(addDays(ws,i))]||0;
+     var el=diffDays(x.start,ws),pidx=3;for(var j=0;j<4;j++){if(el<pi.b[j+1]){pidx=j;break}}
+     var cur=today()>=ws&&today()<=we,past=we<today();
+     rows+='<tr class="'+(cur?"cur":"")+'"><td>第'+n+'周<br><span class="muted">'+(ws.getMonth()+1)+'/'+ws.getDate()+'–'+(we.getMonth()+1)+'/'+we.getDate()+'</span></td><td>'+PHASES[pidx].n+'</td><td>'+plan+'</td><td>'+(past||cur?act+'<div class="bar"><i style="width:'+Math.min(100,Math.round(act/plan*100))+'%"></i></div>':'<span class="muted">—</span>')+'</td></tr>';
+     ws=addDays(ws,7);n++;if(n>60)break}
+   h+='<section class="card"><p class="h">逐周安排 <small>计划 / 实际分钟</small></p><table class="wk"><tr><th>周次</th><th>阶段</th><th>计划</th><th>实际</th></tr>'+rows+'</table></section>';
+  }
+  h+='<p class="muted" style="margin:12px 4px 0">计划按通用的练琴规律生成，具体曲目要求以所报考级机构当年的考级教材和任课老师的安排为准。</p>';
+  return h;
+}
+
+function vLesson(){
+  var L=S.lessons,rem=remaining(),nl=nextLesson(),h="";
+  h+='<section class="card lift"><div class="row" style="justify-content:space-between;align-items:flex-end"><div><div class="muted">剩余课时</div><div class="big">'+rem+'<small> / '+(L.total||0)+' 节</small></div></div><button class="btn red" data-act="useLesson">今天上过课 −1</button></div>';
+  h+='<div class="pkg"><i style="width:'+(L.total?Math.min(100,Math.round(L.used.length/L.total*100)):0)+'%"></i></div><div class="muted">已上 '+L.used.length+' 节'+(L.teacher?' · 老师：'+esc(L.teacher):'')+(L.place?' · '+esc(L.place):'')+'</div>';
+  if(L.total&&rem<=2)h+='<div class="alert warn"><i>!</i><div>课时只剩 '+rem+' 节了，记得和老师确认续课。</div></div>';
+  if(!L.total)h+='<div class="alert info"><i>i</i><div>先在下面填“买了多少节课”，之后每上一节点一下 −1。</div></div>';
+  h+='</section>';
+  h+='<section class="card"><p class="h">下一次上课</p>'+(nl?'<div style="font-family:var(--serif);font-size:24px;font-weight:700">'+whenText(nl.at)+'</div><p class="sub">还有 '+fmtLeft(nl.at-new Date())+'</p>':'<p class="sub">还没设置每周上课时间。</p>');
+  h+='<ul class="list">'+L.slots.map(function(s,i){return '<li><span>每'+WD[s.wd]+' '+esc(s.time)+'（'+(s.dur||60)+' 分钟）</span><button class="x" data-delslot="'+i+'" aria-label="删除">×</button></li>'}).join("")+'</ul>';
+  h+='<div class="grid3" style="margin-top:8px"><select id="slWd">'+WD.map(function(w,i){return '<option value="'+i+'"'+(i===6?" selected":"")+'>'+w+'</option>'}).join("")+'</select><input type="time" id="slTime" value="10:00"><select id="slDur"><option value="30">30分钟</option><option value="45">45分钟</option><option value="60" selected>60分钟</option><option value="90">90分钟</option></select></div><button class="btn ghost block" style="margin-top:8px" data-act="addSlot">+ 添加每周上课时间</button>';
+  h+='<hr class="s"><p class="h" style="font-size:16px">上课提醒</p><p class="sub">“加到手机日历”会下载一个日历文件，导入后每周上课前 1 小时由手机日历提醒，最可靠。网页通知只在页面打开时生效。</p><div class="grid2"><button class="btn" data-act="ics">加到手机日历</button><button class="btn ghost" data-act="notify">'+(window.Notification&&Notification.permission==="granted"?"网页通知已开":"开启网页通知")+'</button></div></section>';
+  h+='<section class="card"><p class="h">课时包</p><div class="grid2"><div><label class="f">新买课时（节）</label><input type="number" id="addN" inputmode="numeric" placeholder="如 20"></div><div><label class="f">&nbsp;</label><button class="btn ghost block" data-act="addPkg">+ 加入课时</button></div></div><div class="grid2"><div><label class="f">老师</label><input type="text" id="lTeacher" value="'+esc(L.teacher)+'" placeholder="可选"></div><div><label class="f">地点</label><input type="text" id="lPlace" value="'+esc(L.place)+'" placeholder="可选"></div></div><button class="btn ghost block" style="margin-top:10px" data-act="saveTeacher">保存老师和地点</button></section>';
+  var u=L.used.slice().reverse().slice(0,8);
+  if(u.length)h+='<section class="card"><p class="h">上课记录 <small>最近 8 次</small></p><ul class="list">'+u.map(function(x,i){return '<li><span>'+md(parse(x.date))+' '+WD[parse(x.date).getDay()]+'</span>'+(i===0?'<button class="btn ghost small" data-act="undoLesson">撤销</button>':'')+'</li>'}).join("")+'</ul></section>';
+  return h;
+}
+function fmtLeft(ms){var h=Math.floor(ms/36e5),d=Math.floor(h/24);return d>0?d+" 天 "+(h%24)+" 小时":h>0?h+" 小时 "+Math.floor(ms%36e5/6e4)+" 分钟":Math.max(1,Math.floor(ms/6e4))+" 分钟"}
+
+function vReport(){
+  var w=weekStats(repOffset),p=S.profile,x=exam(),max=Math.max(goal(),Math.max.apply(null,w.days.map(function(d){return d.v}))),h="";
+  h+='<section class="card lift"><div class="weeknav"><button class="btn ghost small" data-wk="-1">‹ 上一周</button><b>'+(repOffset===0?"本周":repOffset===-1?"上周":md(w.ws)+"那周")+'</b><button class="btn ghost small" data-wk="1"'+(repOffset>=0?' disabled style="opacity:.4"':'')+'>下一周 ›</button></div>';
+  h+='<div class="rep"><div class="m">家长周报 · '+md(w.ws)+' – '+md(w.we)+'</div><div class="t">'+esc(p?p.name:"孩子")+' 的练琴一周</div>';
+  h+='<div class="stats"><div><b>'+w.tot+'</b>总分钟</div><div><b>'+w.cnt+'/7</b>练琴天数</div><div><b>'+w.hit+'</b>达标天数</div><div><b>'+(w.cnt?Math.round(w.tot/w.cnt):0)+'</b>日均分钟</div><div><b>'+streak()+'</b>当前连续</div><div><b>'+lessonsInWeek(w.ws)+'</b>本周上课</div></div>';
+  h+='<div class="bars">'+w.days.map(function(d){return '<div><i class="'+(d.v?"":"z")+'" style="height:'+Math.max(3,Math.round(d.v/max*80))+'px"></i>'+WD[d.d.getDay()].slice(1)+'</div>'}).join("")+'</div>';
+  h+='<div class="m">每日目标 '+goal()+' 分钟'+(x&&x.left>=0?' · 距考级 '+x.left+' 天':'')+(S.lessons.total?' · 剩余课时 '+remaining()+' 节':'')+'</div>';
+  h+='<div class="cm">'+comment(w)+'</div></div>';
+  h+='<button class="btn red block" style="margin-top:14px" data-act="img">生成周报图片，发给家人 / 老师</button></section>';
+  var keys=Object.keys(w.pcs);
+  if(keys.length)h+='<section class="card"><p class="h">本周曲目</p><ul class="list">'+keys.sort(function(a,b){return w.pcs[b]-w.pcs[a]}).map(function(k){return '<li><span>'+esc(k)+'</span><span class="muted">'+w.pcs[k]+' 次'+(w.stuck[k]?' · 卡住 '+w.stuck[k]+' 次':'')+'</span></li>'}).join("")+'</ul></section>';
+  return h;
+}
+
+function vMe(){
+  var p=S.profile||{name:"",inst:"钢琴",level:"",target:"",org:"",exam:"",goal:30},h="";
+  h+='<section class="card lift"><p class="h">孩子档案</p>'+
+  '<label class="f">孩子称呼</label><input type="text" id="pName" value="'+esc(p.name)+'" placeholder="如 小雨">'+
+  '<div class="grid2"><div><label class="f">乐器</label><select id="pInst">'+["钢琴","小提琴","其他"].map(function(i){return '<option'+(p.inst===i?" selected":"")+'>'+i+'</option>'}).join("")+'</select></div><div><label class="f">每天目标（分钟）</label><input type="number" id="pGoal" inputmode="numeric" value="'+esc(p.goal)+'"></div></div>'+
+  '<div class="grid2"><div><label class="f">现在级别</label><select id="pLevel">'+lvOpts(p.level,"未考级")+'</select></div><div><label class="f">准备考</label><select id="pTarget">'+lvOpts(p.target,"暂不考级")+'</select></div></div>'+
+  '<label class="f">考级机构</label><select id="pOrg"><option value="">请选择</option>'+ORGS.map(function(o){return '<option'+(p.org===o?" selected":"")+'>'+o+'</option>'}).join("")+'</select>'+
+  '<label class="f">考试日期</label><input type="date" id="pExam" value="'+esc(p.exam)+'">'+
+  '<p class="muted" style="margin:8px 0 0" id="goalHint">'+goalHint(p.target)+'</p>'+
+  '<button class="btn block" style="margin-top:14px" data-act="saveProfile">保存档案</button></section>';
+  h+='<section class="card"><p class="h">考级曲目 <small>按老师布置的填写</small></p><ul class="list">'+S.pieces.map(function(pc,i){return '<li><span>'+esc(pc.name)+' <span class="muted">· '+esc(pc.type)+'</span></span><button class="x" data-delpc="'+i+'" aria-label="删除">×</button></li>'}).join("")+'</ul>'+
+  '<div class="row" style="margin-top:8px"><select id="pcType" style="width:118px;flex:none">'+TYPES.map(function(t){return '<option>'+t+'</option>'}).join("")+'</select><input type="text" id="pcName" placeholder="曲目名称"></div><button class="btn ghost block" style="margin-top:8px" data-act="addPc">+ 添加曲目</button></section>';
+  h+='<section class="card"><p class="h">数据</p><p class="sub">所有记录只存在当前浏览器。换手机前请先“导出备份”。</p><div class="grid2"><button class="btn ghost" data-act="export">导出备份</button><button class="btn ghost" data-act="import">导入备份</button><button class="btn ghost" data-act="demo">载入示例数据</button><button class="btn ghost" data-act="wipe" style="color:var(--red)">清空全部</button></div><input type="file" id="impFile" accept=".json,application/json" hidden></section>';
+  h+='<section class="card"><p class="h">关于</p><p class="sub" style="margin:0">这个工具由芜湖的钢琴 / 小提琴老师谢林佚设计。教琴十年，担任中央音乐学院、上海音乐学院和安徽省音协的考级考官。家长最常问的三件事——孩子今天练了没有、考级来不来得及、还剩几节课——都放在这一页里。</p><p class="muted" style="margin:10px 0 0">“练琴助手建议”由页面内置规则根据打卡、计划进度和课时自动生成，不是人工点评，也不代替老师的意见。</p></section>';
+  return h;
+}
+function lvOpts(v,z){var o='<option value="">'+z+'</option>';for(var i=1;i<=10;i++)o+='<option value="'+i+'"'+(String(v)===String(i)?" selected":"")+'>'+i+' 级</option>';return o}
+function goalHint(t){t=+t;if(!t)return "每天目标建议：刚开始学 20–30 分钟，循序渐进。";var r=t<=3?"30":t<=6?"45":t<=8?"60":"90";return "参考：准备 "+t+" 级，每天约 "+r+" 分钟较常见，以老师建议为准。"}
+
+function toast(t){var e=document.getElementById("toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove("on")},2000)}
+function go(t){tab=t;try{history.replaceState(null,"","#"+t)}catch(e){}render();window.scrollTo(0,0)}
+function val(id){var e=document.getElementById(id);return e?e.value.trim():""}
+function download(blob,name){var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){a.remove()},500)}
+document.addEventListener("click",function(ev){
+  var b=ev.target.closest("button,a[data-go]");if(!b)return;var d=b.dataset;
+  if(d.tab){go(d.tab);return}
+  if(d.go){ev.preventDefault();go(d.go);return}
+  if(d.min){sel.min=+d.min;document.getElementById("ciMin").value=d.min;document.querySelectorAll("#minChips .chip").forEach(function(c){c.classList.toggle("on",c===b)});return}
+  if(d.pc){var i=sel.pieces.indexOf(d.pc);if(i>=0)sel.pieces.splice(i,1);else sel.pieces.push(d.pc);b.classList.toggle("on");return}
+  if(d.q){sel.q=+d.q;document.querySelectorAll("#qChips .chip").forEach(function(c){c.classList.toggle("on",c===b)});return}
+  if(d.del){S.logs=S.logs.filter(function(l){return l.id!==d.del});save();render();toast("已删除");return}
+  if(d.stage){var a=d.stage.split(":");S.pieces[+a[0]].stage=+a[1];save();render();return}
+  if(d.delslot){S.lessons.slots.splice(+d.delslot,1);save();render();return}
+  if(d.delpc){S.pieces.splice(+d.delpc,1);save();render();return}
+  if(d.wk){repOffset=Math.min(0,repOffset+(+d.wk));render();return}
+  var A=actions[d.act];if(A)A(b);
+});
+document.addEventListener("input",function(e){
+  if(e.target.id==="pTarget")document.getElementById("goalHint").textContent=goalHint(e.target.value);
+  if(e.target.id==="ciMin"){sel.min=+e.target.value||null;document.querySelectorAll("#minChips .chip").forEach(function(c){c.classList.toggle("on",+c.dataset.min===sel.min)})}
+});
+var actions={
+  checkin:function(){
+    var mins=parseInt(val("ciMin"),10),date=val("ciDate")||ymd(today());
+    if(!(mins>0&&mins<=600)){toast("请填写练习分钟数");return}
+    if(date>ymd(today())){toast("不能给未来打卡");return}
+    var pcs=sel.pieces.slice();val("ciOther").split(/[,，、]/).forEach(function(s){s=s.trim();if(s&&pcs.indexOf(s)<0)pcs.push(s)});
+    S.logs.push({id:uid(),date:date,minutes:mins,pieces:pcs,q:sel.q,note:val("ciNote"),ts:Date.now()});
+    save();sel={pieces:[],q:2,min:null};render();
+    var t=minutesByDay()[ymd(today())]||0;toast(date===ymd(today())?(t>=goal()?"打卡成功，今天目标完成！":"打卡成功，今天共 "+t+" 分钟"):"已补记 "+md(parse(date)));
+  },
+  saveProfile:function(){
+    var name=val("pName");if(!name){toast("请填写孩子称呼");return}
+    var old=S.profile||{},ex=val("pExam");
+    S.profile={name:name,inst:val("pInst"),goal:Math.max(5,Math.min(300,parseInt(val("pGoal"),10)||30)),level:val("pLevel"),target:val("pTarget"),org:val("pOrg"),exam:ex,planStart:(ex&&ex===old.exam&&old.planStart)?old.planStart:(ex?ymd(today()):"")};
+    save();toast("档案已保存");go(ex?"plan":"today");
+  },
+  addPc:function(){var n=val("pcName");if(!n){toast("请填写曲目名称");return}if(S.pieces.some(function(p){return p.name===n})){toast("已有同名曲目");return}S.pieces.push({name:n,type:val("pcType"),stage:0});save();render()},
+  useLesson:function(){if(!S.lessons.total){toast("请先添加课时包");return}if(remaining()<=0){toast("课时已用完，请先添加课时");return}S.lessons.used.push({date:ymd(today()),ts:Date.now()});save();render();toast("已扣 1 节，剩余 "+remaining()+" 节")},
+  undoLesson:function(){S.lessons.used.pop();save();render();toast("已撤销")},
+  addPkg:function(){var n=parseInt(val("addN"),10);if(!(n>0&&n<=500)){toast("请填写课时数");return}S.lessons.total=(+S.lessons.total||0)+n;save();render();toast("已加入 "+n+" 节")},
+  saveTeacher:function(){S.lessons.teacher=val("lTeacher");S.lessons.place=val("lPlace");save();render();toast("已保存")},
+  addSlot:function(){var t=val("slTime");if(!t){toast("请选择时间");return}S.lessons.slots.push({wd:+val("slWd"),time:t,dur:+val("slDur")||60});save();render();toast("已添加")},
+  ics:function(){
+    if(!S.lessons.slots.length&&!(S.profile&&S.profile.exam)){toast("请先添加上课时间");return}
+    var BY=["SU","MO","TU","WE","TH","FR","SA"],L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//paopao-studio//qintong//CN","CALSCALE:GREGORIAN"],now=new Date(),stamp=now.toISOString().replace(/[-:]/g,"").split(".")[0]+"Z",nm=S.profile?S.profile.name:"孩子";
+    function f(d){return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"T"+pad(d.getHours())+pad(d.getMinutes())+"00"}
+    S.lessons.slots.forEach(function(s,i){var hm=s.time.split(":"),d=new Date(now.getFullYear(),now.getMonth(),now.getDate(),+hm[0],+hm[1]);while(d.getDay()!=s.wd)d.setDate(d.getDate()+1);var e=new Date(d.getTime()+(s.dur||60)*6e4);
+      L.push("BEGIN:VEVENT","UID:qt-"+i+"-"+stamp+"@paopao-studio","DTSTAMP:"+stamp,"DTSTART:"+f(d),"DTEND:"+f(e),"RRULE:FREQ=WEEKLY;BYDAY="+BY[s.wd],"SUMMARY:"+nm+" 上"+(S.profile?S.profile.inst:"")+"课"+(S.lessons.teacher?"（"+S.lessons.teacher+"）":""));
+      if(S.lessons.place)L.push("LOCATION:"+S.lessons.place);
+      L.push("DESCRIPTION:课前把上次布置的内容完整过一遍。","BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:1小时后上课","TRIGGER:-PT60M","END:VALARM","END:VEVENT")});
+    if(S.profile&&S.profile.exam)L.push("BEGIN:VEVENT","UID:qt-exam-"+stamp+"@paopao-studio","DTSTAMP:"+stamp,"DTSTART;VALUE=DATE:"+S.profile.exam.replace(/-/g,""),"SUMMARY:"+nm+" "+(S.profile.target||"")+"级考级","BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:考级前一周：进入模拟期","TRIGGER:-P7D","END:VALARM","END:VEVENT");
+    L.push("END:VCALENDAR");
+    download(new Blob([L.join("\r\n")],{type:"text/calendar"}),"练琴上课提醒.ics");
+    toast("已生成日历文件，打开即可导入");
+  },
+  notify:function(){if(!window.Notification){toast("当前浏览器不支持网页通知，请用“加到手机日历”");return}Notification.requestPermission().then(function(r){toast(r==="granted"?"已开启：页面打开时，课前 1 小时提醒":"未授权通知");render()})},
+  img:function(){var url=drawReport();document.getElementById("modalBox").innerHTML='<img src="'+url+'" alt="周报图片"><p class="sub" style="margin:10px 0">手机上<b>长按图片</b>即可保存或发送</p><div class="grid2"><a class="btn ghost" href="'+url+'" download="练琴周报.png">下载图片</a><button class="btn" data-act="close">关闭</button></div>';document.getElementById("modal").classList.add("on")},
+  close:function(){document.getElementById("modal").classList.remove("on")},
+  export:function(){download(new Blob([JSON.stringify(S,null,1)],{type:"application/json"}),"练琴打卡备份-"+ymd(today())+".json");toast("备份已导出")},
+  import:function(){var f=document.getElementById("impFile");f.onchange=function(){if(!f.files[0])return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||!Array.isArray(o.logs))throw 0;if(!confirm("导入会覆盖当前数据，确定吗？"))return;S=o;if(!S.notified)S.notified={};if(!S.lessons)S.lessons=blank().lessons;if(!S.pieces)S.pieces=[];save();render();toast("导入成功")}catch(e){toast("文件格式不对")}};r.readAsText(f.files[0])};f.click()},
+  demo:function(){if(S.profile&&!S.demo&&!confirm("载入示例会覆盖当前数据，确定吗？"))return;S=demoData();save();go("today");toast("已载入示例数据")},
+  clearDemo:function(){S=blank();save();go("me");toast("示例已清除，请建档")},
+  wipe:function(){if(!confirm("确定清空所有打卡、课时和档案？此操作不可恢复。"))return;S=blank();save();go("today");toast("已清空")}
+};
+document.getElementById("modal").addEventListener("click",function(e){if(e.target.id==="modal")actions.close()});
+
+/* 示例数据：虚构，仅演示 */
+function demoData(){
+  var d=blank(),t=today();d.demo=true;
+  d.profile={name:"示例·小雨",inst:"钢琴",goal:45,level:"4",target:"5",org:"中央音乐学院",exam:ymd(addDays(t,61)),planStart:ymd(addDays(t,-24))};
+  d.pieces=[{name:"示例·音阶琶音",type:"基本练习",stage:3},{name:"示例·练习曲",type:"练习曲",stage:3},{name:"示例·复调乐曲",type:"乐曲",stage:2},{name:"示例·中外乐曲",type:"乐曲",stage:1}];
+  var mins=[40,50,0,45,35,60,45,30,0,50,45,55,40,45,20,0,45,50,40,60,45,35,50,45],names=d.pieces.map(function(p){return p.name});
+  for(var i=24;i>=1;i--){var v=mins[24-i];if(!v)continue;
+    var pcs=[names[0],names[1+(i%3)]];if(i%2)pcs.push(names[3]);if(i===2||i===4)pcs=[names[2]];
+    d.logs.push({id:"demo"+i,date:ymd(addDays(t,-i)),minutes:v,pieces:pcs,q:(i===2||i===4)?3:(i%4===0?1:2),note:(i===2?"示例备注：复调右手声部总是被盖住":""),ts:0});}
+  d.logs.push({id:"demo0",date:ymd(t),minutes:30,pieces:[names[0],names[2]],q:2,note:"",ts:1});
+  d.lessons={total:20,used:[],slots:[{wd:6,time:"10:00",dur:60},{wd:3,time:"18:30",dur:45}],teacher:"示例·王老师",place:""};
+  for(var k=17;k>=0;k--)d.lessons.used.push({date:ymd(addDays(t,-k*3-1)),ts:0});
+  return d;
+}
+
+/* 周报图片：纯 canvas 绘制 */
+function drawReport(){
+  var w=weekStats(repOffset),p=S.profile,x=exam(),W=1080,H=1420,c=document.createElement("canvas");c.width=W;c.height=H;var g=c.getContext("2d");
+  var SERIF='"Songti SC","STSong","Noto Serif CJK SC",serif',SANS='"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif';
+  function rr(x0,y0,w0,h0,r){r=Math.min(r,h0/2,w0/2);g.beginPath();g.moveTo(x0+r,y0);g.arcTo(x0+w0,y0,x0+w0,y0+h0,r);g.arcTo(x0+w0,y0+h0,x0,y0+h0,r);g.arcTo(x0,y0+h0,x0,y0,r);g.arcTo(x0,y0,x0+w0,y0,r);g.closePath()}
+  g.fillStyle="#F6F1E7";g.fillRect(0,0,W,H);
+  g.fillStyle="#1D1B26";rr(40,40,W-80,H-80,44);g.fill();
+  var ky=H-40-90;g.save();rr(40,40,W-80,H-80,44);g.clip();g.fillStyle="#F6F1E7";g.fillRect(40,ky,W-80,90);
+  for(var k=0,xx=40;xx<W-40;k++,xx+=42){g.fillStyle="#CFC6B6";g.fillRect(xx+41,ky,1.5,90);var pos=k%7;if(pos!==2&&pos!==6){g.fillStyle="#1D1B26";g.fillRect(xx+28,ky,26,54)}}
+  g.restore();
+  g.fillStyle="#B9B0C4";g.font="30px "+SANS;g.fillText("家长周报 · "+md(w.ws)+" – "+md(w.we),100,140);
+  g.strokeStyle="#C8432B";g.lineWidth=4;g.save();g.translate(W-170,112);g.rotate(-.1);rr(-42,-42,84,84,12);g.stroke();g.fillStyle="#C8432B";g.font="bold 46px "+SERIF;g.textAlign="center";g.textBaseline="middle";g.fillText("琴",0,2);g.restore();g.textAlign="left";g.textBaseline="alphabetic";
+  g.fillStyle="#fff";g.font="bold 64px "+SERIF;g.fillText((p?p.name:"孩子")+" 的练琴一周",100,228);
+  var st=[[w.tot,"总分钟"],[w.cnt+"/7","练琴天数"],[w.hit,"达标天数"],[w.cnt?Math.round(w.tot/w.cnt):0,"日均分钟"],[streak(),"当前连续"],[lessonsInWeek(w.ws),"本周上课"]];
+  st.forEach(function(s,i){var cx=100+(i%3)*300,cy=280+Math.floor(i/3)*170;g.fillStyle="rgba(255,255,255,.07)";rr(cx,cy,280,150,24);g.fill();g.fillStyle="#fff";g.font="bold 60px "+SERIF;g.textAlign="center";g.fillText(String(s[0]),cx+140,cy+82);g.fillStyle="#B9B0C4";g.font="28px "+SANS;g.fillText(s[1],cx+140,cy+124);g.textAlign="left"});
+  var max=Math.max(goal(),Math.max.apply(null,w.days.map(function(d){return d.v}))),by=880,bh=230,gy=by-bh*goal()/max;
+  g.strokeStyle="rgba(233,185,122,.55)";g.setLineDash([8,8]);g.lineWidth=2;g.beginPath();g.moveTo(100,gy);g.lineTo(980,gy);g.stroke();g.setLineDash([]);
+  g.fillStyle="#E9B97A";g.font="24px "+SANS;g.textAlign="right";g.fillText("目标 "+goal()+" 分钟",980,gy-12);g.textAlign="left";
+  w.days.forEach(function(d,i){var bx=110+i*124,hh=Math.max(6,bh*d.v/max);g.fillStyle=d.v?(d.v>=goal()?"#E9B97A":"#B98B5A"):"rgba(255,255,255,.14)";rr(bx,by-hh,86,hh,12);g.fill();g.fillStyle="#B9B0C4";g.font="26px "+SANS;g.textAlign="center";g.fillText(WD[d.d.getDay()].slice(1),bx+43,by+40);if(d.v){g.fillStyle="#fff";g.font="24px "+SANS;g.fillText(d.v,bx+43,by-hh-12)}g.textAlign="left"});
+  var info=[];if(x&&x.left>=0)info.push("距考级 "+x.left+" 天");if(S.lessons.total)info.push("剩余课时 "+remaining()+" 节");
+  g.fillStyle="#B9B0C4";g.font="28px "+SANS;g.fillText(info.join("   ·   "),100,985);
+  g.fillStyle="#F6F1E7";rr(100,1015,880,260,26);g.fill();
+  var txt=comment(w).replace(/<[^>]+>/g,"").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'");
+  g.fillStyle="#1D1B26";g.font="31px "+SANS;
+  var line="",ly=1070,lines=0;for(var j=0;j<txt.length;j++){var t2=line+txt[j];if(g.measureText(t2).width>820){g.fillText(line,130,ly);line=txt[j];ly+=46;lines++;if(lines>=4){line="";break}}else line=t2}if(line)g.fillText(line,130,ly);
+  g.fillStyle="#8C8594";g.font="22px "+SANS;g.fillText("练琴助手自动生成"+(S.demo?" · 示例数据":"")+" · paopao-studio.pages.dev/piano-practice",130,1254);
+  return c.toDataURL("image/png");
+}
+
+function checkNotify(){
+  if(!window.Notification||Notification.permission!=="granted")return;var nl=nextLesson();if(!nl)return;
+  var k=nl.at.getTime(),mins=(k-Date.now())/6e4;
+  if(mins<=60&&mins>0&&!S.notified[k]){S.notified[k]=1;save();try{new Notification("1 小时内要上课",{body:whenText(nl.at)+"，剩余课时 "+remaining()+" 节。"})}catch(e){}}
+}
+setInterval(checkNotify,60000);checkNotify();
+window.addEventListener("hashchange",function(){var t=location.hash.slice(1);if(/^(today|plan|lesson|report|me)$/.test(t)&&t!==tab){tab=t;render()}});
+render();
+})();
+</script>
+</body>
+</html>
