@@ -51,7 +51,7 @@ h1 em{font-style:italic;color:var(--pass)}
 .runlog .ok{color:var(--pass)}
 .runlog .ok::before{content:"✓ "}
 .runlog .leak{background:#FBE9E5;border-left:3px solid var(--signal);padding-left:13px;margin:4px -10px 4px 0;transform:translateX(-6px);box-shadow:6px 6px 0 rgba(217,56,30,.12)}
-.runlog .bad{color:var(--signal);font-weight:500}
+.runlog .bad{color:#B42D17;font-weight:500}
 .runlog .leak .d{color:var(--ink)}
 .runlog figcaption{padding:10px 16px;border-top:1px solid var(--rule);color:var(--muted);font-size:12px}
 
