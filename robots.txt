@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://paopao-studio.pages.dev/sitemap.xml

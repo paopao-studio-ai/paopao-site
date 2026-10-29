@@ -1,0 +1,44 @@
+{
+  "protocolVersion": "0.3.0",
+  "name": "Paopao Lead Leak Check",
+  "description": "Finds where inbound leads are silently dropped in Zapier, Make.com and n8n pipelines (no owner, quiet filters, disabled automations, timezone bugs, unsent AI drafts). Free screenshot triage by email; paid Lead Leak Check ($197) returns a written leak map. Human-in-the-loop service: requests are answered by email within one business day.",
+  "url": "https://paopao-studio.pages.dev/a2a",
+  "preferredTransport": "JSONRPC",
+  "version": "0.1.0",
+  "provider": {
+    "organization": "Paopao Studio",
+    "url": "https://paopao-studio.pages.dev/"
+  },
+  "documentationUrl": "https://paopao-studio.pages.dev/#process",
+  "iconUrl": "https://paopao-studio.pages.dev/assets/favicon.svg",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "defaultInputModes": ["text/plain", "application/json", "image/png"],
+  "defaultOutputModes": ["text/plain", "application/json"],
+  "skills": [
+    {
+      "id": "lead-leak-triage",
+      "name": "Lead leak triage",
+      "description": "Given a description or screenshot of a lead pipeline (form or chat -> sheet/CRM -> notification -> reply), returns the most likely places a lead is lost without an error, ranked by risk. Free.",
+      "tags": ["lead management", "zapier", "make.com", "n8n", "crm", "automation audit"],
+      "examples": [
+        "Typeform -> Google Sheets -> Slack #sales. Nobody is assigned. Where do leads get lost?",
+        "Our Make scenario shows all green but some WhatsApp leads never get a reply."
+      ],
+      "inputModes": ["text/plain", "image/png"],
+      "outputModes": ["text/plain"]
+    },
+    {
+      "id": "lead-leak-check",
+      "name": "Lead Leak Check (paid, $197)",
+      "description": "Written leak map for 1-2 lead workflows: process map, leak list, heartbeat alert blueprint, stack recommendation, prioritized backlog. English PDF in 3-5 business days. Fee is credited in full to the $497 Starter build within 30 days. Checkout: https://zolt.me/product/e8fefeba-6506-4d29-a91e-48f5066eef60?utm_source=a2a_card&utm_medium=agent&utm_campaign=lead_leak_1029",
+      "tags": ["audit", "lead pipeline", "fixed price"],
+      "examples": ["Book a Lead Leak Check for our HubSpot + Zapier intake."],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/plain", "application/pdf"]
+    }
+  ]
+}
