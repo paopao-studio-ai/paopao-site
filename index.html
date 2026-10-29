@@ -189,35 +189,57 @@
 .demos .demo-note{margin-top:18px;font-size:.9rem;opacity:.75}
 </style>
 <section id="demos" class="demos wrap">
+<style>
+#demos .demo{display:flex;flex-direction:column}
+#demos .demo-img{display:block}
+#demos .demo-value{margin:.5em 0}
+#demos .demo-actions{margin-top:auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:.6em}
+#demos .demo-buy{display:inline-block;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:600;font-size:.9rem}
+#demos .demo-buy{background:#111;color:#fff}
+#demos .demo-credit{font-size:.85em;opacity:.75;margin-top:.4em}
+</style>
+
   <div class="section-head">
     <p class="label"><span>★</span>Demos</p>
     <h2>Working examples you can open, import and run</h2>
   </div>
   <div class="demo-grid">
-    <a class="demo" href="https://github.com/paopao-studio-ai/unified-inbox-router" target="_blank" rel="noopener">
-      <img src="assets/demos/unified-inbox-router.png" alt="Unified inbox router n8n workflow diagram (demo with sample data)" loading="lazy" width="1200" height="675">
+    <div class="demo">
+      <a class="demo-img" href="https://github.com/paopao-studio-ai/unified-inbox-router" target="_blank" rel="noopener">
+      <img src="assets/demos/unified-inbox-router.png" alt="Unified inbox router n8n workflow diagram (demo with sample data)" loading="lazy" width="1200" height="675"></a>
       <div class="demo-body"><span class="tag">n8n · Gmail · IMAP · Outlook · Sheets · Slack</span>
         <h3>Unified inbox router</h3>
         <p>Four mailboxes become one queue: each email is sorted into lead, support, billing or spam, given an owner and a drafted reply. Nothing is sent until a person approves it.</p>
-        <span class="go">View on GitHub →</span></div></a>
-    <a class="demo" href="https://github.com/paopao-studio-ai/shopify-stripe-order-lookup" target="_blank" rel="noopener">
-      <img src="assets/demos/shopify-stripe-order-lookup.png" alt="Shopify and Stripe order lookup n8n workflow diagram (demo with sample data)" loading="lazy" width="1200" height="675">
+        <p class="demo-value"><strong>Stop answering the same email in four places: every message gets one owner and a reply draft within minutes.</strong></p>
+        <div class="demo-actions"><a class="demo-buy" href="https://zolt.me/product/e8fefeba-6506-4d29-a91e-48f5066eef60?utm_source=site&utm_medium=demos&utm_campaign=lead_leak_1029&utm_content=unified-inbox-router">Get this built for your inboxes — Lead Leak Check $197 →</a><a class="go" href="https://github.com/paopao-studio-ai/unified-inbox-router" target="_blank" rel="noopener">View on GitHub →</a></div>
+        <p class="demo-credit">$197 is credited in full to a build within 30 days.</p></div></div>
+    <div class="demo">
+      <a class="demo-img" href="https://github.com/paopao-studio-ai/shopify-stripe-order-lookup" target="_blank" rel="noopener">
+      <img src="assets/demos/shopify-stripe-order-lookup.png" alt="Shopify and Stripe order lookup n8n workflow diagram (demo with sample data)" loading="lazy" width="1200" height="675"></a>
       <div class="demo-body"><span class="tag">n8n · Shopify GraphQL · Stripe · webhook</span>
         <h3>Shopify + Stripe order lookup</h3>
         <p>Send an email or order number and get one answer from both systems: payment, refunds, disputes and tracking, plus a ready-to-post Slack or Telegram message.</p>
-        <span class="go">View on GitHub →</span></div></a>
-    <a class="demo" href="https://github.com/paopao-studio-ai/n8n-missed-lead-heartbeat" target="_blank" rel="noopener">
-      <img src="assets/demos/heartbeat.png" alt="Missed-lead heartbeat n8n template diagram with a sample alert" loading="lazy" width="1200" height="675">
+        <p class="demo-value"><strong>Answer "where is my order?" in seconds without opening Shopify and Stripe side by side.</strong></p>
+        <div class="demo-actions"><a class="demo-buy" href="https://zolt.me/product/e8fefeba-6506-4d29-a91e-48f5066eef60?utm_source=site&utm_medium=demos&utm_campaign=lead_leak_1029&utm_content=shopify-stripe-order-lookup">Get this built for your store — Lead Leak Check $197 →</a><a class="go" href="https://github.com/paopao-studio-ai/shopify-stripe-order-lookup" target="_blank" rel="noopener">View on GitHub →</a></div>
+        <p class="demo-credit">$197 is credited in full to a build within 30 days.</p></div></div>
+    <div class="demo">
+      <a class="demo-img" href="https://github.com/paopao-studio-ai/n8n-missed-lead-heartbeat" target="_blank" rel="noopener">
+      <img src="assets/demos/heartbeat.png" alt="Missed-lead heartbeat n8n template diagram with a sample alert" loading="lazy" width="1200" height="675"></a>
       <div class="demo-body"><span class="tag">n8n · free template</span>
         <h3>Missed-lead heartbeat</h3>
         <p>Every 5 minutes it finds leads that waited past your reply target with no response, and sends one alert to Slack, Discord or a webhook.</p>
-        <span class="go">View on GitHub →</span></div></a>
-    <a class="demo" href="https://github.com/paopao-studio-ai/lead-leak-check-mcp" target="_blank" rel="noopener">
-      <img src="assets/demos/lead-leak-check-mcp.png" alt="lead-leak-check MCP server sample findings" loading="lazy" width="1200" height="675">
+        <p class="demo-value"><strong>No lead waits unanswered without someone being pinged.</strong></p>
+        <div class="demo-actions"><a class="demo-buy" href="https://zolt.me/product/e8fefeba-6506-4d29-a91e-48f5066eef60?utm_source=site&utm_medium=demos&utm_campaign=lead_leak_1029&utm_content=n8n-missed-lead-heartbeat">Have us check your whole pipeline — Lead Leak Check $197 →</a><a class="go" href="https://github.com/paopao-studio-ai/n8n-missed-lead-heartbeat" target="_blank" rel="noopener">View on GitHub →</a></div>
+        <p class="demo-credit">$197 is credited in full to a build within 30 days.</p></div></div>
+    <div class="demo">
+      <a class="demo-img" href="https://github.com/paopao-studio-ai/lead-leak-check-mcp" target="_blank" rel="noopener">
+      <img src="assets/demos/lead-leak-check-mcp.png" alt="lead-leak-check MCP server sample findings" loading="lazy" width="1200" height="675"></a>
       <div class="demo-body"><span class="tag">MCP server · Python · runs locally</span>
         <h3>lead-leak-check (MCP)</h3>
         <p>Describe your lead pipeline in plain English and get a ranked list of the places leads silently die, each with a concrete fix.</p>
-        <span class="go">View on GitHub →</span></div></a>
+        <p class="demo-value"><strong>See where leads die in your stack before you spend more on ads.</strong></p>
+        <div class="demo-actions"><a class="demo-buy" href="https://zolt.me/product/e8fefeba-6506-4d29-a91e-48f5066eef60?utm_source=site&utm_medium=demos&utm_campaign=lead_leak_1029&utm_content=lead-leak-check-mcp">Have us check your whole pipeline — Lead Leak Check $197 →</a><a class="go" href="https://github.com/paopao-studio-ai/lead-leak-check-mcp" target="_blank" rel="noopener">View on GitHub →</a></div>
+        <p class="demo-credit">$197 is credited in full to a build within 30 days.</p></div></div>
   </div>
   <p class="demo-note">All four are open source (MIT). Screenshots use invented sample data and are not client results.</p>
 </section>
